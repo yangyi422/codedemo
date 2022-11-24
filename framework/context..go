@@ -4,28 +4,120 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"sync"
 )
 
 type Context struct {
 	request        *http.Request
 	responseWriter http.ResponseWriter
-	// 是否超时标记
-	hasTimeout bool
+	ctx            context.Context
+	handle         ControllerHandler
+	hasTimeout     bool        // 是否超时标记
+	writerMux      *sync.Mutex // 写保护机制
 }
 
-func (ctx *Context) BaseContext() context.Context {
-	return ctx.request.Context()
+// 创建一个新的context
+func NewContext(r *http.Request, w http.ResponseWriter) *Context {
+	return &Context{
+		request:        r,
+		responseWriter: w,
+		ctx:            r.Context(),
+		writerMux:      &sync.Mutex{},
+	}
 }
 
-func (ctx *Context) Done() <-chan struct{} {
-	return ctx.BaseContext().Done()
+//=========================================
+// base
+// WriterMux
+func (c *Context) WriterMux() {
+
 }
 
-func (ctx *Context) HasTimeout() bool {
-	return ctx.hasTimeout
+// GetRequest
+func (c *Context) GetRequest() {
+
 }
 
-// 返回Json
+// GetResponse
+func (c *Context) GetResponse() {
+
+}
+
+// SetHasTimeout
+func (c *Context) SetHasTimeout() {
+
+}
+
+// HasTimeout
+func (c *Context) HasTimeout() bool {
+	return c.hasTimeout
+}
+
+//=========================================
+// context
+// BaseContext
+func (c *Context) BaseContext() context.Context {
+	return c.request.Context()
+}
+
+func (c *Context) Deadline() {
+
+}
+
+func (c *Context) Done() <-chan struct{} {
+	return c.BaseContext().Done()
+}
+
+func (c *Context) Err() {
+
+}
+
+func (c *Context) Value() {
+
+}
+
+//=========================================
+// request
+// QueryInt
+func (c *Context) QueryInt() {
+
+}
+
+func (c *Context) QueryString() {
+
+}
+
+func (c *Context) QueryArray() {
+
+}
+
+func (c *Context) QueryAll() {
+
+}
+
+func (c *Context) FormInt() {
+
+}
+
+func (c *Context) FormString() {
+
+}
+
+func (c *Context) FormArray() {
+
+}
+
+func (c *Context) FormAll() {
+
+}
+
+func (c *Context) BindJson() {
+
+}
+
+//=========================================
+// response
+// Json 返回Json
 func (ctx *Context) Json(status int, obj interface{}) error {
 	if ctx.HasTimeout() {
 		return nil
@@ -39,4 +131,12 @@ func (ctx *Context) Json(status int, obj interface{}) error {
 	}
 	ctx.responseWriter.Write(byt)
 	return nil
+}
+
+func (c *Context) HTML() {
+
+}
+
+func (c *Context) Text() {
+
 }
